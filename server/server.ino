@@ -27,7 +27,7 @@ int count_leds(const int* num_leds_arr, const int len) {
   return count;
 }
 
-const int NUM_LEDS_PER_STRIP[8] = {277, 277, 24, 38, 14, 9, 105, 65};
+const int NUM_LEDS_PER_STRIP[8] = {277, 277, 24, 39, 14, 9, 105, 65};
 const int NUM_LEDS = count_leds(NUM_LEDS_PER_STRIP, 8);
 
 const int WIDTH = NUM_LEDS;
@@ -39,7 +39,7 @@ WiFiUDP Udp;
 static const int kBufferSize = 5000;
 char packetBuffer[kBufferSize];
 
-static CRGB leds[809];
+static CRGB leds[810];
 
 struct ImageMetaInfo {
   int width;
@@ -53,48 +53,48 @@ struct ImageMetaInfo {
 };
 
 void setup() {
-//  Serial.begin(115200);
+  Serial.begin(115200);
   delay(10);
 
-  // We start by connecting to a WiFi network
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
 
-//  Serial.println();
-//  Serial.println();
-//  Serial.print("Connecting to ");
-//  Serial.println(ssid);
-
+//   WiFi.begin(ssid);
   WiFi.begin(ssid, password);
 
-//   while (WiFi.status() != WL_CONNECTED) {
-//     delay(500);
-//     Serial.print(".");
-//   }
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
 
-//   Serial.println("");
-//   Serial.println("WiFi connected");
-//   Serial.println("IP address: ");
-//   Serial.println(WiFi.localIP());
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
 
   Udp.begin(1337);
 
-  FastLED.addLeds<WS2812B, 0, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 0), NUM_LEDS_PER_STRIP[0]);
-  FastLED.addLeds<WS2812B, 1, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 1), NUM_LEDS_PER_STRIP[1]);
-  FastLED.addLeds<WS2812B, 2, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 2), NUM_LEDS_PER_STRIP[2]);
-  FastLED.addLeds<WS2812B, 3, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 3), NUM_LEDS_PER_STRIP[3]);
-  FastLED.addLeds<WS2812B, 4, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 4), NUM_LEDS_PER_STRIP[4]);
-  FastLED.addLeds<WS2812B, 5, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 5), NUM_LEDS_PER_STRIP[5]);
-  FastLED.addLeds<WS2812B, 6, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 6), NUM_LEDS_PER_STRIP[6]);
-  FastLED.addLeds<WS2812B, 7, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 7), NUM_LEDS_PER_STRIP[7]);
+  FastLED.addLeds<WS2812B, 1, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 0), NUM_LEDS_PER_STRIP[0]);
+  FastLED.addLeds<WS2812B, 2, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 1), NUM_LEDS_PER_STRIP[1]);
+  FastLED.addLeds<WS2812B, 3, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 2), NUM_LEDS_PER_STRIP[2]);
+  FastLED.addLeds<WS2812B, 4, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 3), NUM_LEDS_PER_STRIP[3]);
+  FastLED.addLeds<WS2812B, 5, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 4), NUM_LEDS_PER_STRIP[4]);
+  FastLED.addLeds<WS2812B, 6, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 5), NUM_LEDS_PER_STRIP[5]);
+  FastLED.addLeds<WS2812B, 7, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 6), NUM_LEDS_PER_STRIP[6]);
+  //FastLED.addLeds<WS2812B, 8, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 7), NUM_LEDS_PER_STRIP[7]);
 
   FastLED.setBrightness(BRIGHTNESS);
 }
 
-ICACHE_FLASH_ATTR void loop() {
-  bzero(packetBuffer, kBufferSize);
+void loop() {
+//  bzero(packetBuffer, kBufferSize);
   int packetSize = Udp.parsePacket();
   if (packetSize) {
-//     Serial.print("Received packet of size ");
-//     Serial.println(packetSize);
+    Serial.print("Received packet of size ");
+    Serial.println(packetSize);
+    return;
 
     int len = Udp.read(packetBuffer, kBufferSize);
     if (len > 0) {
@@ -110,9 +110,11 @@ ICACHE_FLASH_ATTR void loop() {
     const char *pixel_pos = ReadImageData(packetBuffer, packetSize,
                                           &img_info);
 
-//     Serial.print("img_info.width: ");
-//     Serial.print(img_info.width);
-//     Serial.println();
+//    Serial.print("img_info.width: ");
+//    Serial.print(img_info.width);
+//    Serial.print("img_info.height: ");
+//    Serial.print(img_info.height);
+//    Serial.println();
 
     for (int y = 0; y < img_info.height; ++y) {
       for (int x = 0; x < img_info.width; ++x) {
@@ -131,7 +133,7 @@ ICACHE_FLASH_ATTR void loop() {
       }
     }
   }
-//   FastLED.show();
+  FastLED.show();
 }
 
 static const char *skipWhitespace(const char *buffer, const char *end) {
@@ -170,39 +172,39 @@ static int readNextNumber(const char **start, const char *end) {
 
 const char *ReadImageData(const char *in_buffer, size_t buf_len,
                           struct ImageMetaInfo *info) {
-//  if (in_buffer[0] != 'P' || in_buffer[1] != '6' ||
-//      (!isspace(in_buffer[2]) && in_buffer[2] != '#')) {
-//    return in_buffer;  // raw image. No P6 magic header.
-//  }
-//  const char *const end = in_buffer + buf_len;
-//  const char *parse_buffer = in_buffer + 2;
-//  const int width = readNextNumber(&parse_buffer, end);
-//  if (parse_buffer == NULL) return in_buffer;
-//  const int height = readNextNumber(&parse_buffer, end);
-//  if (parse_buffer == NULL) return in_buffer;
-//  const int range = readNextNumber(&parse_buffer, end);
-//  if (parse_buffer == NULL) return in_buffer;
-//  if (!isspace(*parse_buffer++)) return in_buffer;   // last char before data
-//  // Now make sure that the rest of the buffer still makes sense
-//  const size_t expected_image_data = width * height * 3;
-//  const size_t actual_data = end - parse_buffer;
-//  if (actual_data < expected_image_data)
-//    return in_buffer;   // Uh, not enough data.
-//  if (actual_data > expected_image_data) {
-//    // Our extension: at the end of the binary data, we provide an optional
-//    // offset. We can't store it in the header, as it is fixed in number
-//    // of fields. But nobody cares what is at the end of the buffer.
-//    const char *offset_data = parse_buffer + expected_image_data;
-//    info->offset_x = readNextNumber(&offset_data, end);
-//    if (offset_data != NULL) {
-//      info->offset_y = readNextNumber(&offset_data, end);
-//    }
-//    if (offset_data != NULL) {
-//      info->layer = readNextNumber(&offset_data, end);
-//    }
-//  }
-//  info->width = width;
-//  info->height = height;
-//  info->range = range;
-//  return parse_buffer;
+  if (in_buffer[0] != 'P' || in_buffer[1] != '6' ||
+      (!isspace(in_buffer[2]) && in_buffer[2] != '#')) {
+    return in_buffer;  // raw image. No P6 magic header.
+  }
+  const char *const end = in_buffer + buf_len;
+  const char *parse_buffer = in_buffer + 2;
+  const int width = readNextNumber(&parse_buffer, end);
+  if (parse_buffer == NULL) return in_buffer;
+  const int height = readNextNumber(&parse_buffer, end);
+  if (parse_buffer == NULL) return in_buffer;
+  const int range = readNextNumber(&parse_buffer, end);
+  if (parse_buffer == NULL) return in_buffer;
+  if (!isspace(*parse_buffer++)) return in_buffer;   // last char before data
+  // Now make sure that the rest of the buffer still makes sense
+  const size_t expected_image_data = width * height * 3;
+  const size_t actual_data = end - parse_buffer;
+  if (actual_data < expected_image_data)
+    return in_buffer;   // Uh, not enough data.
+  if (actual_data > expected_image_data) {
+    // Our extension: at the end of the binary data, we provide an optional
+    // offset. We can't store it in the header, as it is fixed in number
+    // of fields. But nobody cares what is at the end of the buffer.
+    const char *offset_data = parse_buffer + expected_image_data;
+    info->offset_x = readNextNumber(&offset_data, end);
+    if (offset_data != NULL) {
+      info->offset_y = readNextNumber(&offset_data, end);
+    }
+    if (offset_data != NULL) {
+      info->layer = readNextNumber(&offset_data, end);
+    }
+  }
+  info->width = width;
+  info->height = height;
+  info->range = range;
+  return parse_buffer;
 }

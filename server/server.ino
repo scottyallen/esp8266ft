@@ -1,13 +1,12 @@
-/*
- *  This sketch sends data via HTTP GET requests to data.sparkfun.com service.
- *
- *  You need to get streamId and privateKey at data.sparkfun.com and paste them
- *  below. Or just customize this script to talk to other HTTP servers.
- *
- */
+extern "C" {
+  #include "osapi.h"
+  #include "ets_sys.h"
+  #include "user_interface.h"
+}
+
+#include <lwip/udp.h>
 
 #include <ESP8266WiFi.h>
-#include <WiFiUdp.h>
 
 #include "FastLED.h"
 
@@ -33,13 +32,29 @@ const int NUM_LEDS = count_leds(NUM_LEDS_PER_STRIP, 8);
 const int WIDTH = NUM_LEDS;
 const int HEIGHT = 1;
 
-WiFiUDP Udp;
+udp_pcb *_pcb;
 
-//static const int kBufferSize = 65535;  // maximum UDP has to offer.
+bool unhandled = 0;
+
+void recv(void *arg,
+          udp_pcb *upcb, pbuf *p,
+          ip_addr_t *addr, u16_t port);
+
+#define IPADDR_ANY          ((u32_t)0x00000000UL)
+
 static const int kBufferSize = 5000;
 char packetBuffer[kBufferSize];
+int packetSize = 0;
 
 static CRGB leds[810];
+
+int last = 0;
+int fps = 20;
+int time_between_frames = 1000 / fps;
+
+int last_packet = 0;
+int max_incoming_fps = fps;
+int min_packet_interval = 1000 / max_incoming_fps;
 
 struct ImageMetaInfo {
   int width;
@@ -74,8 +89,13 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
-  Udp.begin(1337);
-
+  _pcb = udp_new();
+  udp_recv(_pcb, &recv, 0);
+  ip_addr_t addr;
+  addr.addr = IPADDR_ANY;
+  int port = 1337;
+  udp_bind(_pcb, &addr, port);
+  Serial.println("listening to udp on port 1337");
   FastLED.addLeds<WS2812B, 1, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 0), NUM_LEDS_PER_STRIP[0]);
   FastLED.addLeds<WS2812B, 2, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 1), NUM_LEDS_PER_STRIP[1]);
   FastLED.addLeds<WS2812B, 3, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 2), NUM_LEDS_PER_STRIP[2]);
@@ -83,26 +103,19 @@ void setup() {
   FastLED.addLeds<WS2812B, 5, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 4), NUM_LEDS_PER_STRIP[4]);
   FastLED.addLeds<WS2812B, 6, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 5), NUM_LEDS_PER_STRIP[5]);
   FastLED.addLeds<WS2812B, 7, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 6), NUM_LEDS_PER_STRIP[6]);
-  //FastLED.addLeds<WS2812B, 8, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 7), NUM_LEDS_PER_STRIP[7]);
+  FastLED.addLeds<WS2812B, 8, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 7), NUM_LEDS_PER_STRIP[7]);
 
   FastLED.setBrightness(BRIGHTNESS);
 }
 
 void loop() {
-//  bzero(packetBuffer, kBufferSize);
-  int packetSize = Udp.parsePacket();
-  if (packetSize) {
-    Serial.print("Received packet of size ");
-    Serial.println(packetSize);
-    return;
-
-    int len = Udp.read(packetBuffer, kBufferSize);
-    if (len > 0) {
-      packetBuffer[len] = 0;
+  if (unhandled) {
+    // If this runs too frequently, the network traffic can back up and overwhelm the network stack, which
+    // doesn't seem to gracefully discard packets.
+    if (millis() - last < time_between_frames) {
+      return;
     }
-
-//     Serial.println(packetBuffer);
-
+    int start = millis();
     ImageMetaInfo img_info = {0};
     img_info.width = WIDTH;
     img_info.height = HEIGHT;
@@ -110,30 +123,34 @@ void loop() {
     const char *pixel_pos = ReadImageData(packetBuffer, packetSize,
                                           &img_info);
 
-//    Serial.print("img_info.width: ");
-//    Serial.print(img_info.width);
-//    Serial.print("img_info.height: ");
-//    Serial.print(img_info.height);
-//    Serial.println();
-
     for (int y = 0; y < img_info.height; ++y) {
       for (int x = 0; x < img_info.width; ++x) {
         const byte red = *pixel_pos++;
         const byte green  = *pixel_pos++;
         const byte blue = *pixel_pos++;
 
-//        Serial.print(red);
-//        Serial.print(", ");
-//        Serial.print(green);
-//        Serial.print(", ");
-//        Serial.print(blue);
-//        Serial.println();
-
        leds[x + y * img_info.width] = CRGB(red, green, blue);
       }
     }
+    FastLED.show();
+    unhandled = 0;
+
+    last = millis();
   }
-  FastLED.show();
+}
+
+void recv(void *arg,
+          udp_pcb *upcb, pbuf *p,
+          ip_addr_t *addr, u16_t port) {
+  if (millis() - last_packet < min_packet_interval) {
+    pbuf_free(p);
+    return;
+  }
+  packetSize = p->tot_len;
+  pbuf_copy_partial(p, packetBuffer, kBufferSize, 0);
+  pbuf_free(p);
+  unhandled = 1;
+  last_packet = millis();
 }
 
 static const char *skipWhitespace(const char *buffer, const char *end) {

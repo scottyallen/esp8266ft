@@ -12,11 +12,9 @@ extern "C" {
 
 FASTLED_USING_NAMESPACE
 
-//const char* ssid     = "Noisebridge Legacy 2.4 gHz";
-const char* ssid     = "HOME-5A9C";
-const char* password = "8C349C2F81C00327";
+const char* ssid     = "Noisebridge Legacy 2.4 gHz";
 
-#define BRIGHTNESS          96  
+#define BRIGHTNESS          96
 
 int count_leds(const int* num_leds_arr, const int len) {
   int count = 0;

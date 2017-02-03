@@ -12,7 +12,7 @@ extern "C" {
 
 FASTLED_USING_NAMESPACE
 
-const char* ssid     = "Noisebridge";
+const char* ssid     = "Noisebridge Legacy 2.4 gHz";
 
 #define BRIGHTNESS          96
 #define NETWORK_TIMEOUT     10
@@ -25,8 +25,8 @@ int count_leds(const int* num_leds_arr, const int len) {
   return count;
 }
 
-const int NUM_LEDS_PER_STRIP[1] = {277};
-const int NUM_LEDS = count_leds(NUM_LEDS_PER_STRIP, 1);
+const int NUM_LEDS_PER_STRIP[8] = {277, 277, 24, 39, 14, 9, 105, 65};
+const int NUM_LEDS = count_leds(NUM_LEDS_PER_STRIP, 8);
 
 const int WIDTH = NUM_LEDS;
 const int HEIGHT = 1;
@@ -70,7 +70,7 @@ struct ImageMetaInfo {
 
 void setup() {
   Serial.begin(115200);
-  delay(500);
+  delay(10);
 
   Serial.println();
   Serial.println();
@@ -98,6 +98,14 @@ void setup() {
   udp_bind(_pcb, &addr, port);
   Serial.println("listening to udp on port 1337");
   FastLED.addLeds<WS2812B, 1, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 0), NUM_LEDS_PER_STRIP[0]);
+  FastLED.addLeds<WS2812B, 2, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 1), NUM_LEDS_PER_STRIP[1]);
+  FastLED.addLeds<WS2812B, 3, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 2), NUM_LEDS_PER_STRIP[2]);
+  FastLED.addLeds<WS2812B, 4, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 3), NUM_LEDS_PER_STRIP[3]);
+  FastLED.addLeds<WS2812B, 5, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 4), NUM_LEDS_PER_STRIP[4]);
+  FastLED.addLeds<WS2812B, 6, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 5), NUM_LEDS_PER_STRIP[5]);
+  FastLED.addLeds<WS2812B, 7, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 6), NUM_LEDS_PER_STRIP[6]);
+  FastLED.addLeds<WS2812B, 8, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 7), NUM_LEDS_PER_STRIP[7]);
+
   FastLED.setBrightness(BRIGHTNESS);
 }
 

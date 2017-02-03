@@ -10,7 +10,6 @@ _Setup_
   nodemcu to your system with screen\* while jerking it around to see if screen
   drops away back to shell (\* `screen /dev/ttyUSBX 115200`). No flakey cables!
 * use arduino version 1.6.4 or higher (for the ease of the built-in board manager)
-* install lwip from repo or sources (poss. in ard/esp, idunno http://dunkels.com/adam/software.html )
 
 * re arduino:
 follow sparkfun instructions for adding esp8266 based board defs to arduino 
@@ -45,6 +44,4 @@ TODOS:
 * build alternative flashing decoupled from arduino
 * submodule/pin esp8266 libraries to the repo so the project has a better chance
   of building.  the esp8266 gcc/heap/memory map defs are a moving target and the
-  longer
-sketches may not compile as versions change.
-
+  longer sketches may not compile as versions change.

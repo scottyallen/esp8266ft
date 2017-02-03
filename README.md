@@ -37,6 +37,7 @@ _Test_
 
 TODOS:
 
+* code should progress to demo mode even without making a wifi connection. timeout?
 * Enhance serial outputs.. 
 * Add a improved reset.
 * Add sanity check (does it tell you its working when it is disconnected from the lightstrip? When its disconnected from the serial?)

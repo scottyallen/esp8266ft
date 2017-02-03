@@ -1,13 +1,16 @@
-This sketch should work to flash the noisebridge lightstrip equipment.
+This sketch should work to flash the noisebridge lightstrip equipment, at the
+time of writing the square noise table at square.noise and the bookshelf lights
+at bookcase.noise
 
 Easy flashing instructions in Setup, Program, and Test sections below:
 
 _Setup_
-* get a system.  Linux osX or windows based.  Anything with usb ports.
-* get a good usb cable.  dont get a flakey cable. test cable by connecting the nodemcu to your system with screen\* and  using jerking motions to see if ti
-  ( `screen /dev/ttyUSBX 115200`)
-* use arduino version 1.6.4 or higher (for board manager)
-* install lwip from repo or sources ( http://dunkels.com/adam/software.html )
+* get a system.  Linux osX or windows based.  Anything with usb ports.  
+* get a good usb cable.  dont get a flakey cable. test cable by connecting the
+  nodemcu to your system with screen\* while jerking it around to see if screen
+  drops away back to shell (\* `screen /dev/ttyUSBX 115200`). No flakey cables!
+* use arduino version 1.6.4 or higher (for the ease of the built-in board manager)
+* install lwip from repo or sources (poss. in ard/esp, idunno http://dunkels.com/adam/software.html )
 
 * re arduino:
 follow sparkfun instructions for adding esp8266 based board defs to arduino 
@@ -39,4 +42,9 @@ TODOS:
 * Add a improved reset.
 * Add sanity check (does it tell you its working when it is disconnected from the lightstrip? When its disconnected from the serial?)
 * Add watchdog for flakey esp8266 wifi stack -- another uC
+* build alternative flashing decoupled from arduino
+* submodule/pin esp8266 libraries to the repo so the project has a better chance
+  of building.  the esp8266 gcc/heap/memory map defs are a moving target and the
+  longer
+sketches may not compile as versions change.
 

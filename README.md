@@ -35,8 +35,8 @@ _Test_
 
 TODOS:
 
-Enhance serial outputs.. 
-Add a improved reset.
-Add sanity check (does it tell you its working when it is disconnected from the lightstrip? When its disconnected from the serial?)
-Add watchdog for flakey esp8266 wifi stack -- another uC
+* Enhance serial outputs.. 
+* Add a improved reset.
+* Add sanity check (does it tell you its working when it is disconnected from the lightstrip? When its disconnected from the serial?)
+* Add watchdog for flakey esp8266 wifi stack -- another uC
 

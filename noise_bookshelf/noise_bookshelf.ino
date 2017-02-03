@@ -101,8 +101,8 @@ void setup() {
   FastLED.addLeds<WS2812B, 2, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 1), NUM_LEDS_PER_STRIP[1]);
   FastLED.addLeds<WS2812B, 3, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 2), NUM_LEDS_PER_STRIP[2]);
   FastLED.addLeds<WS2812B, 4, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 3), NUM_LEDS_PER_STRIP[3]);
-//  FastLED.addLeds<WS2812B, 5, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 4), NUM_LEDS_PER_STRIP[4]);
-//  FastLED.addLeds<WS2812B, 6, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 5), NUM_LEDS_PER_STRIP[5]);
+  FastLED.addLeds<WS2812B, 5, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 4), NUM_LEDS_PER_STRIP[4]);
+  FastLED.addLeds<WS2812B, 6, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 5), NUM_LEDS_PER_STRIP[5]);
   FastLED.addLeds<WS2812B, 7, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 6), NUM_LEDS_PER_STRIP[6]);
   FastLED.addLeds<WS2812B, 8, GRB>(leds, count_leds(NUM_LEDS_PER_STRIP, 7), NUM_LEDS_PER_STRIP[7]);
 

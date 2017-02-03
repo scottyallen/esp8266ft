@@ -14,8 +14,8 @@ follow sparkfun instructions for adding esp8266 based board defs to arduino
 https://learn.sparkfun.com/tutorials/esp8266-thing-hookup-guide/installing-the-esp8266-arduino-addon
 ( http://arduino.esp8266.com/stable/package_esp8266com_index.json )
 
-#use the nodeMCU 0.9 ESP-12 Module from the Tools>borads menu pick in Arduino (unverified)
-use the nodeMCU 1.0 ESP-12E module option from the Tools>boards menu pick in Arduino (worked)
+* \#use the nodeMCU 0.9 ESP-12 Module from the Tools>borads menu pick in Arduino (unverified)
+* use the nodeMCU 1.0 ESP-12E module option from the Tools>boards menu pick in Arduino (worked)
 
 _Program_
 * Disconnect the nodeMCU from the flaschen lighten.

@@ -12,7 +12,7 @@ extern "C" {
 
 FASTLED_USING_NAMESPACE
 
-const char* ssid     = "Noisebridge Legacy 2.4 gHz";
+const char* ssid     = "Noisebridge";
 
 #define BRIGHTNESS          96
 #define NETWORK_TIMEOUT     10
